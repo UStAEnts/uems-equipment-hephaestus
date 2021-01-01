@@ -5,11 +5,9 @@ import ReadEquipmentMessage = EquipmentMessage.ReadEquipmentMessage;
 import CreateEquipmentMessage = EquipmentMessage.CreateEquipmentMessage;
 import DeleteEquipmentMessage = EquipmentMessage.DeleteEquipmentMessage;
 import UpdateEquipmentMessage = EquipmentMessage.UpdateEquipmentMessage;
-import { EquipmentValidators } from "@uems/uemscommlib/build/equipment/EquipmentValidators";
-import EquipmentRepresentation = EquipmentValidators.EquipmentRepresentation;
 import InternalEquipment = EquipmentResponse.InternalEquipment;
 
-export class EquipmentDatabase extends GenericMongoDatabase<ReadEquipmentMessage, CreateEquipmentMessage, DeleteEquipmentMessage, UpdateEquipmentMessage, EquipmentRepresentation> {
+export class EquipmentDatabase extends GenericMongoDatabase<ReadEquipmentMessage, CreateEquipmentMessage, DeleteEquipmentMessage, UpdateEquipmentMessage, InternalEquipment> {
 
     protected async createImpl(create: EquipmentMessage.CreateEquipmentMessage, details: Collection): Promise<string[]> {
         const { msg_id, msg_intention, status, ...document } = create;
@@ -30,7 +28,7 @@ export class EquipmentDatabase extends GenericMongoDatabase<ReadEquipmentMessage
         return super.defaultDelete(remove);
     }
 
-    protected async queryImpl(query: EquipmentMessage.ReadEquipmentMessage, details: Collection): Promise<EquipmentValidators.EquipmentRepresentation[]> {
+    protected async queryImpl(query: EquipmentMessage.ReadEquipmentMessage, details: Collection): Promise<InternalEquipment[]> {
         const find: Record<string, unknown> = {};
 
         // IDs have to be treated as object IDs

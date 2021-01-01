@@ -8,16 +8,13 @@ import path from 'path';
 import * as z from 'zod';
 import { EquipmentDatabase } from "./database/EquipmentDatabase";
 import bind from "./Binding";
-import { RabbitNetworkHandler as GenericRabbitNetworkHandler } from "@uems/micro-builder/build/messaging/GenericRabbitNetworkHandler";
-import { EquipmentValidators } from "@uems/uemscommlib/build/equipment/EquipmentValidators";
-import {EquipmentMessage as EM, EquipmentResponse as ER} from "@uems/uemscommlib";
-import EquipmentMessageValidator = EquipmentValidators.EquipmentMessageValidator;
-import EquipmentResponseValidator = EquipmentValidators.EquipmentResponseValidator;
+import {EquipmentMessage as EM, EquipmentResponse as ER, EquipmentMessageValidator, EquipmentResponseValidator} from "@uems/uemscommlib";
+import {RabbitNetworkHandler} from '@uems/micro-builder';
 import { ConfigurationSchema } from "./ConfigurationTypes";
 
 __.info('starting hephaestus...');
 
-let messager: GenericRabbitNetworkHandler<any, any, any, any, any, any> | undefined;
+let messager: RabbitNetworkHandler<any, any, any, any, any, any> | undefined;
 let database: EquipmentDatabase | undefined;
 let configuration: z.infer<typeof ConfigurationSchema> | undefined;
 
@@ -64,7 +61,7 @@ fs.readFile(path.join(__dirname, '..', 'config', 'configuration.json'), { encodi
 
         __.info('setting up the message broker');
 
-        messager = new GenericRabbitNetworkHandler<EM.EquipmentMessage,
+        messager = new RabbitNetworkHandler<EM.EquipmentMessage,
             EM.CreateEquipmentMessage,
             EM.DeleteEquipmentMessage,
             EM.ReadEquipmentMessage,
