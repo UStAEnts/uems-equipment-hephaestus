@@ -7,7 +7,7 @@
     "build": "tsc --listEmittedFiles",
     "start": "node build/index.js",
     "start:dev": "ts-node --files src/index.ts",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "repository": {
     "type": "git",

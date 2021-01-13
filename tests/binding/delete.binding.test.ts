@@ -80,6 +80,8 @@ describe('create messages of states', () => {
             expect(message).toHaveProperty('result');
             expect(message).toHaveProperty('status');
 
+            console.log(message);
+
             expect(message.status).toEqual(MsgStatus.SUCCESS);
             expect(message.result).toHaveLength(1);
             expect(message.result[0]).toEqual('56d9bf92f9be48771d6fe5b2');
