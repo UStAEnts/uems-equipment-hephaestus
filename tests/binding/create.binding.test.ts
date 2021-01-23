@@ -41,10 +41,10 @@ describe('create messages of states', () => {
         equipmentDB = new EquipmentDatabase(db, { details: 'details', changelog: 'changelog' });
     });
     afterAll(() => defaultAfterAll(client, db));
-    beforeEach(() => {
-        broker.clear();
-        bind(equipmentDB, fakeBroker);
-        defaultBeforeEach([], client, db)
+    beforeEach(async () => {
+        await broker.clear();
+        await bind(equipmentDB, fakeBroker);
+        await defaultBeforeEach([], client, db)
     });
     afterEach(() => defaultAfterEach(client, db));
 
