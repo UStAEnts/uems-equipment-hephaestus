@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@uems/micro-builder": "0.0.12",
-    "@uems/uemscommlib": "0.1.0-beta.36",
+    "@uems/uemscommlib": "0.1.0-beta.38",
     "amqplib": "^0.6.0",
     "mongodb": "^3.6.3",
     "winston": "^3.3.3",

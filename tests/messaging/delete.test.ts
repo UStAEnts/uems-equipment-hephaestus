@@ -1,8 +1,8 @@
 import { Db, MongoClient, ObjectId } from "mongodb";
 import { defaultAfterAll, defaultAfterEach, defaultBeforeAll, defaultBeforeEach } from "../utilities/setup";
-import { BaseSchema } from "@uems/uemscommlib/build/BaseSchema";
-import Intentions = BaseSchema.Intentions;
+import { BaseSchema } from "@uems/uemscommlib";
 import { EquipmentDatabase } from "../../src/database/EquipmentDatabase";
+import Intentions = BaseSchema.Intentions;
 
 const empty = <T extends Intentions>(intention: T): { msg_intention: T, msg_id: 0, status: 0, userID: string } => ({
     msg_intention: intention,

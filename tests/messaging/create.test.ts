@@ -1,6 +1,6 @@
 import { defaultAfterAll, defaultAfterEach, defaultBeforeAll, defaultBeforeEach, haveNoAdditionalKeys } from "../utilities/setup";
 import { Db, MongoClient } from "mongodb";
-import { BaseSchema } from "@uems/uemscommlib/build/BaseSchema";
+import { BaseSchema } from "@uems/uemscommlib";
 import { EquipmentDatabase } from "../../src/database/EquipmentDatabase";
 import Intentions = BaseSchema.Intentions;
 

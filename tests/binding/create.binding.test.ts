@@ -3,8 +3,7 @@ import { defaultAfterAll, defaultAfterEach, defaultBeforeAll, defaultBeforeEach 
 import { BindingBroker } from "../utilities/BindingBroker";
 import { RabbitNetworkHandler } from "@uems/micro-builder";
 import bind from "../../src/Binding";
-import { BaseSchema } from "@uems/uemscommlib/build/BaseSchema";
-import { EquipmentMessage, MsgStatus } from "@uems/uemscommlib";
+import { BaseSchema, EquipmentMessage, MsgStatus } from "@uems/uemscommlib";
 import { EquipmentDatabase } from "../../src/database/EquipmentDatabase";
 import Intentions = BaseSchema.Intentions;
 import ReadEquipmentMessage = EquipmentMessage.ReadEquipmentMessage;
