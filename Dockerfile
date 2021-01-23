@@ -4,7 +4,7 @@ FROM node:current-alpine
 WORKDIR /user/app
 
 # Normally we want to run the cached built one
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
 
 # Copy in package.json file and package-lock.json if its present
 # This means that everything will be redone if the dependencies change
