@@ -1,0 +1,32 @@
+{
+  "message": {
+    "gateway": "gateway",
+    "request": "request",
+    "inbox": "hephaestus_inbox",
+    "topics": [
+      "equipment.details.*"
+    ],
+    "options": {
+      "hostname": "rabbit-uems",
+      "port": 5672,
+      "username": "rdadmin",
+      "password": "5PeztA2*^wGETm8qce*9"
+    }
+  },
+  "database": {
+    "username": "root",
+    "password": "example",
+    "uri": "mongo",
+    "port": 27017,
+    "server": "equipment-details",
+    "database": "equipment",
+    "collections": {
+      "details": "details",
+      "changelog": "changelog"
+    },
+    "settings": {
+      "authMechanism": "SCRAM-SHA-1",
+      "authSource": "admin"
+    }
+  }
+}
