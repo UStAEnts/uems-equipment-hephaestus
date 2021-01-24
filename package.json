@@ -5,7 +5,8 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc --listEmittedFiles",
-    "start": "node build/index.js",
+    "clean": "rm -r build/ || true",
+    "start": "node build/src/index.js",
     "start:dev": "ts-node --files src/index.ts",
     "test": "jest --runInBand"
   },
