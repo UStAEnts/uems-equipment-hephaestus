@@ -73,17 +73,27 @@ export class EquipmentDatabase extends GenericMongoDatabase<ReadEquipmentMessage
     constructor(_configuration: MongoDBConfiguration | Db, collections?: MongoDBConfiguration["collections"]) {
         super(_configuration, collections);
 
-        if (!this._details) throw new Error('database failed to initialise');
-        void this._details.createIndex({ assetID: 1 }, { unique: true });
-        void this._details.createIndex({
-            assertID: 'text',
-            name: 'text',
-            manufacturer: 'text',
-            model: 'text',
-            miscIdentifier: 'text',
-            locationSpecifier: 'text',
-            category: 'text'
-        });
+        const register = (details: Collection) => {
+            void details.createIndex({ assetID: 1 }, { unique: true });
+            void details.createIndex({
+                assertID: 'text',
+                name: 'text',
+                manufacturer: 'text',
+                model: 'text',
+                miscIdentifier: 'text',
+                locationSpecifier: 'text',
+                category: 'text'
+            });
+        };
+
+        if (this._details) {
+            register(this._details);
+        } else {
+            this.once('ready', () => {
+                if (!this._details) throw new Error('Details db was not initialised on ready');
+                register(this._details);
+            });
+        }
     }
 
     protected async createImpl(create: EquipmentMessage.CreateEquipmentMessage, details: Collection): Promise<string[]> {
