@@ -6,6 +6,16 @@ import { ClientFacingError, RabbitNetworkHandler, tryApplyTrait } from "@uems/mi
 
 const _b = _ml(__filename, 'binding');
 
+const requestTracker: ('success' | 'fail')[] = [];
+
+const saveRequest = (result: 'success' | 'fail') => {
+    if (requestTracker.length >= 50) requestTracker.shift();
+    requestTracker.push(result);
+
+    tryApplyTrait('successful', requestTracker.filter((e) => e === 'success').length);
+    tryApplyTrait('fail', requestTracker.filter((e) => e === 'fail').length);
+}
+
 async function execute(
     message: EquipmentMessage.EquipmentMessage,
     database: EquipmentDatabase | undefined,
@@ -13,6 +23,7 @@ async function execute(
 ) {
     if (!database) {
         _b.warn('query was received without a valid database connection');
+        saveRequest('fail');
         throw new Error('uninitialised database connection');
     }
 
@@ -44,6 +55,7 @@ async function execute(
         _b.error('failed to query database for events', {
             error: e as unknown,
         });
+        saveRequest('fail');
 
         if (e instanceof ClientFacingError) {
             send({
@@ -83,6 +95,8 @@ async function execute(
             userID: message.userID,
         });
     }
+
+    saveRequest('success');
 }
 
 export default function bind(database: EquipmentDatabase, broker: RabbitNetworkHandler<any, any, any, any, any, any>): void {
