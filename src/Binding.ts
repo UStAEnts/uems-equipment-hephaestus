@@ -1,9 +1,8 @@
 import { constants } from "http2";
 import { EquipmentDatabase } from "./database/EquipmentDatabase";
 import { _ml } from "./logging/Log";
-import { RabbitNetworkHandler } from "@uems/micro-builder";
 import { EquipmentMessage, EquipmentResponse, MsgStatus } from "@uems/uemscommlib";
-import { ClientFacingError } from "@uems/micro-builder/build/errors/ClientFacingError";
+import { ClientFacingError, RabbitNetworkHandler, tryApplyTrait } from "@uems/micro-builder/build/src";
 
 const _b = _ml(__filename, 'binding');
 

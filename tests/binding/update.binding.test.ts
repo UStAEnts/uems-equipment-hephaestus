@@ -1,7 +1,6 @@
 import { Db, MongoClient, ObjectId } from "mongodb";
 import { defaultAfterAll, defaultAfterEach, defaultBeforeAll, defaultBeforeEach } from "../utilities/setup";
 import { BindingBroker } from "../utilities/BindingBroker";
-import { RabbitNetworkHandler } from "@uems/micro-builder";
 import bind from "../../src/Binding";
 import { BaseSchema, EquipmentMessage, MsgStatus } from "@uems/uemscommlib";
 import { EquipmentDatabase } from "../../src/database/EquipmentDatabase";
@@ -10,6 +9,7 @@ import UpdateEquipmentMessage = EquipmentMessage.UpdateEquipmentMessage;
 import DeleteEquipmentMessage = EquipmentMessage.DeleteEquipmentMessage;
 import ReadEquipmentMessage = EquipmentMessage.ReadEquipmentMessage;
 import CreateEquipmentMessage = EquipmentMessage.CreateEquipmentMessage;
+import { RabbitNetworkHandler } from "@uems/micro-builder/build/src";
 // updating normal works
 // updating duplicate fails
 

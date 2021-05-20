@@ -1,7 +1,7 @@
 import { Db, MongoClient, ObjectId } from "mongodb";
 import { defaultAfterAll, defaultAfterEach, defaultBeforeAll, defaultBeforeEach, haveNoAdditionalKeys } from "../utilities/setup";
 import { BindingBroker } from "../utilities/BindingBroker";
-import { RabbitNetworkHandler } from "@uems/micro-builder";
+import { RabbitNetworkHandler } from "@uems/micro-builder/build/src";
 import bind from "../../src/Binding";
 import { BaseSchema, EquipmentMessage, MsgStatus } from "@uems/uemscommlib";
 import { EquipmentDatabase } from "../../src/database/EquipmentDatabase";

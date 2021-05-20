@@ -9,8 +9,8 @@ import * as z from 'zod';
 import { EquipmentDatabase } from "./database/EquipmentDatabase";
 import bind from "./Binding";
 import {EquipmentMessage as EM, EquipmentResponse as ER, EquipmentMessageValidator, EquipmentResponseValidator} from "@uems/uemscommlib";
-import {RabbitNetworkHandler} from '@uems/micro-builder';
 import { ConfigurationSchema } from "./ConfigurationTypes";
+import { launchCheck, RabbitNetworkHandler, tryApplyTrait } from "@uems/micro-builder/build/src";
 
 __.info('starting hephaestus...');
 

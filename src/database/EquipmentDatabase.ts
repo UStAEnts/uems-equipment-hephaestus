@@ -1,13 +1,11 @@
 import { Collection, Db, FilterQuery, ObjectId, UpdateQuery } from "mongodb";
-import { GenericMongoDatabase, MongoDBConfiguration } from "@uems/micro-builder";
 import { EquipmentMessage, EquipmentResponse } from "@uems/uemscommlib";
-import { genericCreate, genericDelete, genericEntityConversion, genericUpdate } from "@uems/micro-builder/build/utility/GenericDatabaseFunctions";
-import { ClientFacingError } from "@uems/micro-builder/build/errors/ClientFacingError";
 import ReadEquipmentMessage = EquipmentMessage.ReadEquipmentMessage;
 import CreateEquipmentMessage = EquipmentMessage.CreateEquipmentMessage;
 import DeleteEquipmentMessage = EquipmentMessage.DeleteEquipmentMessage;
 import UpdateEquipmentMessage = EquipmentMessage.UpdateEquipmentMessage;
 import InternalEquipment = EquipmentResponse.InternalEquipment;
+import { ClientFacingError, genericCreate, genericDelete, genericEntityConversion, GenericMongoDatabase, MongoDBConfiguration } from "@uems/micro-builder/build/src";
 
 type InDatabaseEquipment = {
     _id: ObjectId,
