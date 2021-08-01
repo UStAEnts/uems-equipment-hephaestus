@@ -30,7 +30,7 @@ let messager: RabbitNetworkHandler<any, any, any, any, any, any> | undefined;
 let database: EquipmentDatabase | undefined;
 let configuration: z.infer<typeof ConfigurationSchema> | undefined;
 
-fs.readFile(path.join(__dirname, '..', '..', 'config', 'configuration.json'), { encoding: 'utf8' })
+fs.readFile(process.env.UEMS_HEPHAESTUS_CONFIG_LOCATION ?? path.join(__dirname, '..', '..', 'config', 'configuration.json'), { encoding: 'utf8' })
     .then((file) => {
         __.debug('loaded configuration file');
 
