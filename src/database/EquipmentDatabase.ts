@@ -179,7 +179,7 @@ export class EquipmentDatabase extends GenericMongoDatabase<ReadEquipmentMessage
         let result;
         try {
             result = await details.updateOne(filter, changes);
-        } catch (e) {
+        } catch (e:any) {
             if (e.code === 11000) {
                 throw new ClientFacingError('cannot update to existing asset id');
             }
