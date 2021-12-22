@@ -1,12 +1,22 @@
-import { _ml, setupGlobalLogger } from './logging/Log';
+import {_ml, setupGlobalLogger} from './logging/Log';
 import fs from 'fs/promises';
 import path from 'path';
 import * as z from 'zod';
-import { EquipmentDatabase } from "./database/EquipmentDatabase";
+import {EquipmentDatabase} from "./database/EquipmentDatabase";
 import bind from "./Binding";
-import { EquipmentMessage as EM, EquipmentMessageValidator, EquipmentResponse as ER, EquipmentResponseValidator, has } from "@uems/uemscommlib";
-import { ConfigurationSchema } from "./ConfigurationTypes";
-import { launchCheck, RabbitNetworkHandler, tryApplyTrait } from "@uems/micro-builder/build/src";
+import {
+    DiscoveryMessage, DiscoveryResponse,
+    EquipmentMessage as EM,
+    EquipmentMessageValidator,
+    EquipmentResponse as ER,
+    EquipmentResponseValidator,
+    has
+} from "@uems/uemscommlib";
+import {ConfigurationSchema} from "./ConfigurationTypes";
+import {launchCheck, RabbitNetworkHandler, tryApplyTrait} from "@uems/micro-builder/build/src";
+import {DiscoveryValidators} from "@uems/uemscommlib/build/discovery/DiscoveryValidators";
+import DiscoveryMessageValidator = DiscoveryValidators.DiscoveryMessageValidator;
+import DiscoveryResponseValidator = DiscoveryValidators.DiscoveryResponseValidator;
 
 setupGlobalLogger();
 const __ = _ml(__filename);
@@ -30,7 +40,7 @@ let messager: RabbitNetworkHandler<any, any, any, any, any, any> | undefined;
 let database: EquipmentDatabase | undefined;
 let configuration: z.infer<typeof ConfigurationSchema> | undefined;
 
-fs.readFile(process.env.UEMS_HEPHAESTUS_CONFIG_LOCATION ?? path.join(__dirname, '..', '..', 'config', 'configuration.json'), { encoding: 'utf8' })
+fs.readFile(process.env.UEMS_HEPHAESTUS_CONFIG_LOCATION ?? path.join(__dirname, '..', '..', 'config', 'configuration.json'), {encoding: 'utf8'})
     .then((file) => {
         __.debug('loaded configuration file');
 
@@ -78,16 +88,35 @@ fs.readFile(process.env.UEMS_HEPHAESTUS_CONFIG_LOCATION ?? path.join(__dirname, 
 
         __.info('setting up the message broker');
 
-        messager = new RabbitNetworkHandler<EM.EquipmentMessage,
+        messager = new RabbitNetworkHandler<EM.EquipmentMessage | DiscoveryMessage.DiscoveryDeleteMessage,
             EM.CreateEquipmentMessage,
             EM.DeleteEquipmentMessage,
-            EM.ReadEquipmentMessage,
+            EM.ReadEquipmentMessage | DiscoveryMessage.DiscoveryDeleteMessage,
             EM.UpdateEquipmentMessage,
-            ER.EquipmentReadResponseMessage | ER.EquipmentResponseMessage>
+            // @ts-ignore
+            ER.EquipmentReadResponseMessage | ER.EquipmentResponseMessage | DiscoveryResponse.DiscoveryDeleteResponse>
         (
             configuration.message,
-            (data) => new EquipmentMessageValidator().validate(data),
-            (data) => new EquipmentResponseValidator().validate(data),
+            async (data) => {
+                try {
+                    if (await new EquipmentMessageValidator().validate(data)) {
+                        return true
+                    }
+                } catch (e) {
+                }
+
+                return await new DiscoveryMessageValidator().validate(data);
+            },
+            async (data) => {
+                try {
+                    if (await new EquipmentResponseValidator().validate(data)) {
+                        return true
+                    }
+                } catch (e) {
+                }
+
+                return await new DiscoveryResponseValidator().validate(data);
+            },
         );
 
         const unbind = messager.once('error', (err) => {

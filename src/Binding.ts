@@ -1,8 +1,8 @@
-import { constants } from "http2";
-import { EquipmentDatabase } from "./database/EquipmentDatabase";
-import { _ml } from "./logging/Log";
-import { EquipmentMessage, EquipmentResponse, MsgStatus } from "@uems/uemscommlib";
-import { ClientFacingError, RabbitNetworkHandler, tryApplyTrait } from "@uems/micro-builder/build/src";
+import {constants} from "http2";
+import {EquipmentDatabase} from "./database/EquipmentDatabase";
+import {_ml} from "./logging/Log";
+import {DiscoveryMessage, DiscoveryResponse, EquipmentMessage, EquipmentResponse, MsgStatus} from "@uems/uemscommlib";
+import {ClientFacingError, RabbitNetworkHandler, tryApplyTrait} from "@uems/micro-builder/build/src";
 
 const _b = _ml(__filename, 'binding');
 
@@ -14,6 +14,87 @@ const saveRequest = (result: 'success' | 'fail') => {
 
     tryApplyTrait('successful', requestTracker.filter((e) => e === 'success').length);
     tryApplyTrait('fail', requestTracker.filter((e) => e === 'fail').length);
+}
+
+async function discover(
+    message: DiscoveryMessage.DiscoverMessage,
+    database: EquipmentDatabase,
+    send: (res: any) => void) {
+
+    if (message.assetType === 'venue') {
+        const result = await database.query({
+            locationID: message.assetID,
+            ...message,
+        });
+        send({
+            userID: message.userID,
+            status: MsgStatus.SUCCESS,
+            msg_id: message.msg_id,
+            msg_intention: message.msg_intention,
+            modify: 0,
+            restrict: result.length,
+        });
+    } else if (message.assetType === 'user') {
+        const result = await database.query({
+            managerID: message.assetID,
+            ...message,
+        });
+        send({
+            userID: message.userID,
+            status: MsgStatus.SUCCESS,
+            msg_id: message.msg_id,
+            msg_intention: message.msg_intention,
+            modify: 0,
+            restrict: result.length,
+        });
+    } else if (message.assetType === 'equipment') {
+        const result = await database.query({id: message.assetID, ...message});
+        send({
+            userID: message.userID,
+            status: MsgStatus.SUCCESS,
+            msg_id: message.msg_id,
+            msg_intention: message.msg_intention,
+            modify: result.length,
+            restrict: 0,
+        });
+    } else {
+        send({
+            userID: message.userID,
+            status: MsgStatus.SUCCESS,
+            msg_id: message.msg_id,
+            msg_intention: message.msg_intention,
+            modify: 0,
+            restrict: 0,
+        })
+        return;
+    }
+}
+
+async function remove(
+    message: DiscoveryMessage.DeleteMessage,
+    database: EquipmentDatabase,
+    send: (res: any) => void) {
+
+    let length = 0;
+    if (message.assetType === 'equipment') {
+        length = (await database.delete({
+            userID: 'anonymous',
+            msg_id: message.msg_id,
+            msg_intention: 'DELETE',
+            status: 0,
+            id: message.assetID
+        })).length;
+    }
+
+    send({
+        userID: message.userID,
+        status: MsgStatus.SUCCESS,
+        msg_id: message.msg_id,
+        msg_intention: "DELETE",
+        restrict: 0,
+        modified: length,
+        successful: true,
+    });
 }
 
 async function execute(
@@ -100,7 +181,11 @@ async function execute(
 }
 
 export default function bind(database: EquipmentDatabase, broker: RabbitNetworkHandler<any, any, any, any, any, any>): void {
-    broker.on('query', (message, send) => execute(message, database, send));
+    broker.on('query', (message, send, routingKey) => {
+        if (routingKey.endsWith('.discover')) return discover(message, database, send);
+        else if (routingKey.endsWith('.delete')) return remove(message, database, send);
+        else return execute(message, database, send)
+    });
     _b.debug('bound [query] event');
 
     broker.on('delete', (message, send) => execute(message, database, send));
